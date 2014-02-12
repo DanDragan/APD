@@ -1,0 +1,129 @@
+import java.util.StringTokenizer;
+import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.io.FileNotFoundException;
+
+class Map extends PartialSolution {
+
+	private HashMap<String, Integer> words;
+	private String file;
+	private byte[] chars;
+	private long start, end;
+	private RandomAccessFile accfile;
+
+	public Map(long start, long end, String file) {
+		this.start = start;
+		this.end = end;
+		this.file = file;
+		try {
+			accfile = new RandomAccessFile(file, "r");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		words = new HashMap<String, Integer>();
+	}
+	
+	/* deplaseaza cu un anumit offset pozitia de start a secventei de 
+	 * caractere in cazul in care aceasta incepe in mijlocul unui cuvant 
+	 */
+	void startsInMiddle() throws Exception {
+
+		if (start != 0) {
+			accfile.seek(start - 1);
+			byte character = accfile.readByte();
+			int offset = 0;
+
+			if (Character.isLetter(character)) {
+				character = accfile.readByte();
+				while (Character.isLetter(character)) {
+					offset++;
+					character = accfile.readByte();
+				}
+
+				while (!Character.isLetter(character)) {
+					offset++;
+					character = accfile.readByte();
+				}
+			} else {
+				character = accfile.readByte();
+				if (!Character.isLetter(character)) {
+
+					while (!Character.isLetter(character)) {
+						offset++;
+						character = accfile.readByte();
+					}
+				}
+			}
+			start += offset;
+		}
+	}
+	
+	/* deplaseaza cu un anumit offset pozitia de final a secventei de 
+	 * caractere in cazul in care aceasta se termina in mijlocul unui cuvant 
+	 */
+	void endsInMiddle() throws Exception {
+
+		accfile.seek(end - 1);
+		byte character = accfile.readByte();
+		int offset = 0;
+
+		if (Character.isLetter(character)) {
+			while (Character.isLetter(character)) {
+				offset++;
+				character = accfile.readByte();
+			}
+		}
+
+		end += offset;
+	}
+	
+	/* citeste secventa de bytes
+	 */
+	void parseFile() throws Exception {
+
+		long csize = end - start + 1;
+		chars = new byte[(int) csize];
+		accfile.seek(start);
+		accfile.read(chars);
+	}
+
+	/* citeste secventa, o parseaza si mapeaza fiecare cuvant
+	 * si frecventa lui in HashMap-ul words
+	 */
+	void addWords() {
+		String s = new String(chars);
+		String delim = " ?><|^&#%~`(){}[]-+=:;\",.*\\\n/\t\r\f";
+		StringTokenizer st = new StringTokenizer(s, delim);
+		while(st.hasMoreElements()) {
+			String w = st.nextToken().toLowerCase();
+			int freq = 0;
+			if (words.containsKey(w)) {
+				freq = words.get(w);
+			}
+			if (!w.equals("")) {
+				words.put(w, freq + 1);
+			}
+		}
+	}
+	
+	@Override
+	public void go() {
+		try {
+			startsInMiddle();
+			endsInMiddle();
+			parseFile();
+			addWords();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	HashMap<String, Integer> getWords() {
+		return words;
+	}
+	
+	String getFile() {
+		return file;
+	}
+}

@@ -1,0 +1,100 @@
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Vector;
+
+public class Reduce extends PartialSolution {
+
+	String file, selectedFile;
+	private Vector<HashMap<String, Integer>> allWords;
+	private HashMap<String, Integer> totalWords;
+	private HashMap<String, Double> frequencies;
+	int numWords;
+	double sim;
+
+	public Reduce(Vector<HashMap<String, Integer>> allWords, String file,
+			String selectedFile) {
+		this.allWords = allWords;
+		this.file = file;
+		this.selectedFile = selectedFile;
+		totalWords = new HashMap<String, Integer>();
+		frequencies = new HashMap<String, Double>();
+		numWords = 0;
+		sim = 0;
+	}
+
+	public void combinePartialVectors() {
+		for (HashMap<String, Integer> hmap : allWords) {
+			Iterator<Entry<String, Integer>> entries = hmap.entrySet()
+					.iterator();
+			while (entries.hasNext()) {
+				Entry<String, Integer> entry = entries.next();
+				int freq = entry.getValue();
+				numWords += freq;
+				if (totalWords.containsKey(entry.getKey())) {
+					freq += totalWords.get(entry.getKey());
+				}
+				totalWords.put(entry.getKey(), freq);
+			}
+			System.out.println(numWords);
+		}
+		Iterator<Entry<String, Integer>> entries = totalWords.entrySet()
+				.iterator();
+		while (entries.hasNext()) {
+			double frequency;
+			Entry<String, Integer> entry = entries.next();
+			frequency = ((double)(entry.getValue() / (double)numWords)) * 100;
+			String value = entry.getKey();
+			frequencies.put(value, frequency);
+			Main.mapFreqToFile(file, frequencies);
+		}
+		// System.out.println(frequencies);
+	}
+
+	public void determineSymmetry() {
+		//System.out.println(Main.fmap.get(selectedFile));
+		if (!file.equals(selectedFile)) {
+			HashMap<String, Double> smap = Main.fmap.get(selectedFile);
+			HashMap<String, Double> fmap = Main.fmap.get(file);
+
+			Iterator<Entry<String, Double>> entries1 = smap.entrySet()
+					.iterator();
+			while (entries1.hasNext()) {
+				Entry<String, Double> entry1 = entries1.next();
+				Iterator<Entry<String, Double>> entries2 = fmap.entrySet()
+						.iterator();
+				while (entries2.hasNext()) {
+					Entry<String, Double> entry2 = entries2.next();
+					if (entry1.getKey().equals(entry2.getKey())) {
+						sim += entry1.getValue() * entry2.getValue();
+					}
+				}
+			}
+			System.out.println(sim);
+		}
+	}
+
+	@Override
+	public void go() {
+		if (!Main.firstIsOver)
+			combinePartialVectors();
+		else
+			determineSymmetry();
+	}
+
+	HashMap<String, Double> getFrequencies() {
+		return frequencies;
+	}
+
+	double getSim() {
+		return sim;
+	}
+
+	String getFile() {
+		return file;
+	}
+
+	HashMap<String, Integer> getFileMap() {
+		return totalWords;
+	}
+}

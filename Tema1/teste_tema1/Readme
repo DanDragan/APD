@@ -1,0 +1,13 @@
+in10_5 este input cu N=10 si Nc=5
+out10_5_1 si out10_5_10 sunt output pentru rularea cu in10_5 si 1, respectiv 10 saptamani
+Fisierele de test cu N=10 v-au fost date pentru verificarea corectitudinii, nu vor fi folosite ca teste de performanta.
+
+in100_20 e fisier de intrare cu N=100 si Nc=20
+out100_20_100 este outputul rularii programului pe in100_20, cu 100 de saptamani
+
+in50_7 e fisier de intrare cu N=50 si Nc=7
+out50_7_60 este outputul rularii programului pe in50_7, cu 60 de saptamani
+
+
+Verificati ca outputurile voastre sunt la fel cu: diff -Bw fis1 fis2
+

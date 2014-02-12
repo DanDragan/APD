@@ -1,0 +1,51 @@
+*** Tema 2 APD ***
+*** Indexare documente folosind Map-Reduce ***
+*** Dragan Dan-Stefan 333CA ***
+
+Continutul arhivei:
+    - Main.java
+    - Map.java
+    - Reduce.java
+    - WorkPool.java
+    - ReplicatedWorkers.java
+    - Makefile
+    - README
+    
+Cerinta tema:
+    Determinarea gradului de asemanare a unor fisiere cu un fisier ales,
+    folosind formula:
+    sim(di, dj) = sum(f(t,di) * f(t,dj)) [%], unde t apartine lui V,
+    iar f(t, d) - frecventa aparitiei cuvantului t in documentul d
+    
+*** Explicatii implementare ***
+    
+    Se citesc datele din fisierul de intrare dat ca parametru.
+    Pentru fiecare document, ce se afla in fisierul de intrare, determin
+    dimensiunea acestuia si o impart in secvente de o dimensiune citita din
+    acelasi fisier, fiecare secventa pasandu-o unui task de tip Map, care
+    va crea un HashMap partial in care va mapa fiecare cuvant cu frecventa
+    sa de aparitie in aceasta secventa.
+    
+    Dupa terminarea unui task de tip Map iau HashMap-ul partial creat si
+    il mapez la numele fisierului, care este dat ca parametru.
+    
+    La terminarea executiei tuturor taskurilor Map, voi crea cate un task
+    Reduce pentru fiecare fisier. Aceste taskuri vor exectuta operatia de
+    combinare a HashMap-urilor partiale intr-un singur HashMap, ce va contine
+    un HashMap de cuvant si frecventa sa in intregul document, mapat la numele
+    documentului.
+    
+    Se asteapta terminarea executiei tuturor taskurilor Reduce de mai sus, pentru
+    a se putea completa in intregime HashMap-ul descris mai sus. Apoi se vor
+    mai crea tot atatea taskuri de tip Reduce, care vor executa operatia de
+    determinare a asemanarii dintre documentul selectat si toate celelalte documente.
+    Rezultatul fiecarui task se mapeaza la un HashMap ce contine numele fisierului
+    si asemanarea lui cu fisierul selectat.
+    
+    La final voi itera prin acest HashMap si voi scrie in fisier acele fisiere (impreuna
+    cu asemanarea lor cu fisierul selectat) care au gradul de asemanare mai mare decat
+    limita specificata in fisierul de intare.
+    
+    Pentru rezolvarea temei am folosit clasele WorkPool.java si ReplicatedWorker.java din
+    resursele de laborator.  
+

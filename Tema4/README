@@ -1,0 +1,41 @@
+*** Tema 4 APD ***
+*** Simularea unei retele in MPI ***
+*** Dragan Dan-Stefan 333CA ***
+
+Continutul arhivei:
+    - tema4.cpp
+    - Makefile
+    - README
+    - input
+    - message
+    
+Cerinta tema:
+    Partea I: determinarea unei topologii si a tabelei de rutare
+        pentru fiecare nod
+    Partea a II-a: trimiterea de mesaje folosind tabela de rutare
+    Partea a III-a: stabilirea unui presedinte si a unui vicepresedinte
+        alesi prin vot de fiecare nod
+        
+
+*** Explicatii implementare ***
+
+    Partea I: Fiecare nod va citi din fisierul de intrare linia corespunzatoare
+        ID-ului sau, apoi radacina va trimite rank-ul sau copiilor. Acestia vor
+        seta mesajul primit ca parinte si vor trimite rank-ul propriu pe toate
+        legaturile in afara celei pe care s-a primit mesajul. Se va verifica
+        primirea de mesaje suplimentare pentru fiecare nod si se va sterge
+        legatura pe care a venit. Se calculeaza tabela de rutare pentru fiecare
+        nod folosind parcurgerea in latime. Se trimit mesaje de broadcast pentru
+        determinarea finalizarii primei parti.
+        
+    Partea a II-a: Pentru trimiterea mesajelor, fiecare nod parcurge fisierul si
+        trimite mesajele ce-l au pe el ca sursa. Dupa trimitere nodurile vor
+        anunta ca au terminat de trimis, iar pentru primirea mesajelor se va
+        astepta primirea de mesaje de STOP de la toate celelalte noduri.
+    
+    Partea a III-a: Initial vor vota doar nodurile frunza, dupa care vor trimite
+        rezultatele lor parintilor. Acestia vor aduna voturile primite cu cele
+        proprii si le vor trimite mai departe, pana ajung la radacina. Aceasta
+        va lua pozitiile primelor 2 valori in ordine descrescatoare din vectorul
+        de voturi si va trimite copiilor rezultate. Nodurile intermediare vor propaga
+        mesajele pana la frunza.
